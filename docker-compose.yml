@@ -1,0 +1,94 @@
+version: '3'
+services:
+  availability-service-db:
+      image: postgres:16
+      container_name: availability-service-db
+      environment:
+        POSTGRES_DB: availability
+        POSTGRES_USER: user
+        POSTGRES_PASSWORD: user
+      ports:
+        - "5434:5432"
+
+  user-service-db:
+      image: postgres:16
+      container_name: user-service-db
+      environment:
+        POSTGRES_DB: users
+        POSTGRES_USER: user
+        POSTGRES_PASSWORD: user
+      ports:
+        - "5435:5432"
+
+  appointment-service-db:
+      image: postgres:16
+      container_name: appointment-service-db
+      environment:
+        POSTGRES_DB: appointments
+        POSTGRES_USER: user
+        POSTGRES_PASSWORD: user
+      ports:
+        - "5436:5432"
+
+  eureka-server:
+    container_name: eureka-server
+    image: jurck222/eureka-server:latest
+    pull_policy: always
+    ports:
+      - "8761:8761"
+
+  gateway-service:
+    container_name: service-gateway
+    image: jurck222/service-gateway:latest
+    pull_policy: always
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    ports:
+      - "8087:8087"
+    depends_on:
+      - eureka-server
+
+  availability-service:
+    container_name: availability-service
+    image: jurck222/availability-service:latest
+    pull_policy: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://availability-service-db:5432/availability
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: user
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+      - gateway-service
+      - availability-service-db
+
+  users-service:
+    container_name: user-service
+    image: jurck222/user-service:latest
+    pull_policy: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://user-service-db:5432/users
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: user
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+      - gateway-service
+      - user-service-db
+
+  appointment-service:
+    container_name: appointment-service
+    image: jurck222/appointment-service:latest
+    pull_policy: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://appointment-service-db:5432/appointments
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: user
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+      - gateway-service
+      - appointment-service-db

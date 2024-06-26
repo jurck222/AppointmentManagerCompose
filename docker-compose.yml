@@ -19,6 +19,8 @@ services:
         POSTGRES_PASSWORD: user
       ports:
         - "5435:5432"
+      volumes:
+      - ./init-users.sql:/docker-entrypoint-initdb.d/init.sql
 
   appointment-service-db:
       image: postgres:16

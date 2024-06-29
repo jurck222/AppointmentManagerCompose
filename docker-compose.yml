@@ -94,3 +94,21 @@ services:
       - eureka-server
       - gateway-service
       - appointment-service-db
+
+  angular-app:
+    build: .
+    container_name: angular-app
+    image: jurck222/angular-docker:latest
+    pull_policy: always
+    ports:
+      - '4200:4200'
+    volumes:
+      - ./:/angular-app
+    environment:
+      - STYLE=css
+    depends_on:
+      - eureka-server
+      - gateway-service
+      - users-service
+      - appointment-service
+      - availability-service

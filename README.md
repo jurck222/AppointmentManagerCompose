@@ -92,3 +92,6 @@ Feel free to experiment more.
 - Appointment service: <https://github.com/jurck222/appointment-service>
 - Availability service: <https://github.com/jurck222/availability-service>
 - Angular frontend: <https://github.com/jurck222/AppointmentManagerFE>
+
+## Diagram
+![diagram](https://github.com/jurck222/AppointmentManagerCompose/assets/56190152/bd94b239-7dc6-46d0-a223-8b74ee206b88)
